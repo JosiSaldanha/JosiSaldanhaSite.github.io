@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Josiane Saldanha — Dev em Construção ✦</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── TOKENS ─────────────────────────────────────────── */
+    :root {
+      --lilac-100: #f3eeff;
+      --lilac-200: #e4d5ff;
+      --lilac-300: #c9aaff;
+      --lilac-400: #a97df5;
+      --lilac-500: #8b5cf6;
+      --lilac-600: #6d3dd4;
+      --lilac-700: #4a1fa8;
+      --ink:       #1a0e30;
+      --ink-light: #5e4e7a;
+      --cream:     #fdfbff;
+      --card-bg:   #f8f3ff;
+      --white:     #ffffff;
+      --radius:    16px;
+      --transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    /* ─── RESET & BASE ───────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Mono', monospace;
+      background: var(--cream);
+      color: var(--ink);
+      overflow-x: hidden;
+      cursor: auto;
+    }
+
+    /* ─── NOISE GRAIN OVERLAY ────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9990; opacity: 0.4;
+    }
+
+    /* ─── HERO ───────────────────────────────────────────── */
+    .hero {
+      min-height: 100svh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 0 8vw;
+      gap: 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* decorative blob */
+    .hero::after {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, var(--lilac-200) 0%, transparent 70%);
+      border-radius: 50%;
+      top: -100px; right: -100px;
+      animation: blobFloat 8s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes blobFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33%       { transform: translate(-30px, 20px) scale(1.05); }
+      66%       { transform: translate(20px, -30px) scale(0.95); }
+    }
+
+    /* scrolling ticker at top */
+    .ticker-wrap {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: var(--lilac-500);
+      color: var(--white);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      padding: 6px 0;
+      z-index: 100;
+      overflow: hidden;
+    }
+    .ticker-inner {
+      display: flex;
+      width: max-content;
+      animation: tickerScroll 30s linear infinite;
+      gap: 4rem;
+    }
+    @keyframes tickerScroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .ticker-inner span { white-space: nowrap; }
+
+    /* photo area */
+    .hero-photo {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      animation: fadeSlideLeft 1s var(--transition) both;
+      animation-delay: 0.2s;
+      overflow: visible;
+      padding-bottom: 3rem;
+    }
+
+    .photo-frame {
+      width: 320px; height: 380px;
+      border-radius: 60% 40% 55% 45% / 45% 55% 45% 55%;
+      background: var(--lilac-200);
+      border: 3px solid var(--lilac-300);
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 30px 80px -10px rgba(139, 92, 246, 0.35),
+                  inset 0 0 0 1px rgba(255,255,255,0.5);
+      animation: morphBlob 10s ease-in-out infinite;
+      transition: transform 0.4s ease;
+    }
+    .photo-frame:hover { transform: scale(1.03); }
+
+    @keyframes morphBlob {
+      0%, 100% { border-radius: 60% 40% 55% 45% / 45% 55% 45% 55%; }
+      25%       { border-radius: 50% 50% 45% 55% / 55% 45% 55% 45%; }
+      50%       { border-radius: 40% 60% 60% 40% / 50% 50% 50% 50%; }
+      75%       { border-radius: 55% 45% 50% 50% / 45% 55% 45% 55%; }
+    }
+
+    .photo-frame img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .photo-placeholder {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 12px;
+      color: var(--lilac-600);
+    }
+    .photo-placeholder .icon { font-size: 4rem; opacity: 0.5; }
+    .photo-placeholder p {
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      color: var(--lilac-500);
+      text-align: center;
+      padding: 0 20px;
+      line-height: 1.6;
+    }
+
+    /* floating badge */
+    .badge-float {
+      position: absolute;
+      bottom: -36px; right: 10px;
+      background: var(--white);
+      border: 2px solid var(--lilac-300);
+      border-radius: 50px;
+      padding: 10px 20px;
+      font-size: 0.72rem;
+      color: var(--lilac-600);
+      letter-spacing: 0.08em;
+      box-shadow: 0 10px 30px -5px rgba(139,92,246,0.2);
+      animation: floatBadge 3s ease-in-out infinite;
+      white-space: nowrap;
+      z-index: 10;
+    }
+    @keyframes floatBadge {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-8px); }
+    }
+
+    /* hero text */
+    .hero-text {
+      z-index: 2;
+      animation: fadeSlideRight 1s var(--transition) both;
+      animation-delay: 0.4s;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      color: var(--lilac-500);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 24px; height: 1px;
+      background: var(--lilac-400);
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      font-weight: 300;
+      line-height: 1;
+      color: var(--ink);
+      margin-bottom: 0.2rem;
+    }
+    h1 em {
+      font-style: italic;
+      color: var(--lilac-600);
+    }
+
+    .hero-role {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--ink-light);
+      letter-spacing: 0.15em;
+      margin-bottom: 2rem;
+      padding-left: 2px;
+    }
+
+    .hero-bio {
+      font-size: 0.88rem;
+      line-height: 1.9;
+      color: var(--ink-light);
+      max-width: 440px;
+      margin-bottom: 2.5rem;
+      border-left: 2px solid var(--lilac-300);
+      padding-left: 1.2rem;
+    }
+
+    .hero-links {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      cursor: none;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .btn-primary {
+      background: var(--lilac-500);
+      color: var(--white);
+      border: none;
+    }
+    .btn-primary:hover {
+      background: var(--lilac-600);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px -5px rgba(139,92,246,0.5);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--lilac-600);
+      border: 1.5px solid var(--lilac-300);
+    }
+    .btn-outline:hover {
+      background: var(--lilac-100);
+      transform: translateY(-3px);
+      border-color: var(--lilac-400);
+    }
+
+    /* ─── SECTION BASE ───────────────────────────────────── */
+    section {
+      padding: 7rem 8vw;
+    }
+
+    .section-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--lilac-400);
+      margin-bottom: 0.5rem;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1; height: 1px;
+      background: linear-gradient(to right, var(--lilac-300), transparent);
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 300;
+      color: var(--ink);
+      margin-bottom: 3rem;
+    }
+    .section-title em { font-style: italic; color: var(--lilac-600); }
+
+    /* ─── FLIP CARDS GRID ────────────────────────────────── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .flip-card {
+      height: 240px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    .flip-card-inner {
+      position: relative;
+      width: 100%; height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.7s cubic-bezier(0.23,1,0.32,1);
+    }
+
+    .flip-card:hover .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flip-front, .flip-back {
+      position: absolute; inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: var(--radius);
+      padding: 1.6rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .flip-front {
+      background: var(--card-bg);
+      border: 1.5px solid var(--lilac-200);
+      box-shadow: 0 4px 20px rgba(139,92,246,0.08);
+    }
+    .flip-front:hover { /* handled by parent */ }
+
+    .flip-back {
+      background: linear-gradient(135deg, var(--lilac-600), var(--lilac-500));
+      transform: rotateY(180deg);
+      color: var(--white);
+    }
+
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--ink);
+      margin-bottom: 0.3rem;
+    }
+
+    .card-hint {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--lilac-400);
+      text-transform: uppercase;
+    }
+
+    .card-back-text {
+      font-size: 0.78rem;
+      line-height: 1.65;
+      color: rgba(255,255,255,0.92);
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .card-back-tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      background: rgba(255,255,255,0.2);
+      padding: 4px 12px;
+      border-radius: 20px;
+      align-self: flex-start;
+    }
+
+    /* ─── SKILLS BAR SECTION ─────────────────────────────── */
+    .skills-section { background: var(--lilac-100); }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem 4rem;
+    }
+
+    .skill-item { padding: 0.5rem 0; }
+
+    .skill-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.6rem;
+    }
+
+    .skill-name {
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      color: var(--ink);
+    }
+
+    .skill-level {
+      font-size: 0.68rem;
+      color: var(--lilac-500);
+    }
+
+    .skill-bar {
+      height: 4px;
+      background: var(--lilac-200);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .skill-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--lilac-400), var(--lilac-600));
+      border-radius: 4px;
+      width: 0;
+      transition: width 1.4s cubic-bezier(0.23,1,0.32,1);
+    }
+
+    /* ─── EXPERIENCE TIMELINE ────────────────────────────── */
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 8px; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--lilac-400), transparent);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 3rem;
+      padding-left: 1.5rem;
+      animation: fadeSlideRight 0.6s ease both;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -2rem; top: 8px;
+      width: 8px; height: 8px;
+      background: var(--lilac-400);
+      border-radius: 50%;
+      border: 2px solid var(--cream);
+      box-shadow: 0 0 0 3px var(--lilac-200);
+    }
+
+    .timeline-date {
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      color: var(--lilac-500);
+      margin-bottom: 0.4rem;
+    }
+
+    .timeline-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: var(--ink);
+      margin-bottom: 0.2rem;
+    }
+
+    .timeline-org {
+      font-size: 0.75rem;
+      color: var(--ink-light);
+      margin-bottom: 1rem;
+    }
+
+    .timeline-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .timeline-list li {
+      font-size: 0.82rem;
+      line-height: 1.7;
+      color: var(--ink-light);
+      padding-left: 1rem;
+      position: relative;
+    }
+
+    .timeline-list li::before {
+      content: '◈';
+      position: absolute;
+      left: 0;
+      color: var(--lilac-400);
+      font-size: 0.6rem;
+      top: 4px;
+    }
+
+    /* ─── EDUCATION ROW ──────────────────────────────────── */
+    .edu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .edu-card {
+      background: var(--card-bg);
+      border: 1.5px solid var(--lilac-200);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .edu-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 50px -10px rgba(139,92,246,0.2);
+    }
+
+    .edu-year {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--lilac-500);
+      margin-bottom: 0.5rem;
+    }
+
+    .edu-degree {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      color: var(--ink);
+      margin-bottom: 0.3rem;
+    }
+
+    .edu-school {
+      font-size: 0.72rem;
+      color: var(--ink-light);
+    }
+
+    /* ─── CONTACT SECTION ────────────────────────────────── */
+    .contact-section {
+      background: var(--ink);
+      color: var(--white);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-section::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 50% 0%, var(--lilac-700) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .contact-section .section-title {
+      color: var(--white);
+    }
+    .contact-section .section-title em { color: var(--lilac-300); }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+
+    .contact-link {
+      display: flex; align-items: center; gap: 10px;
+      color: var(--lilac-200);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      padding: 12px 24px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      cursor: none;
+    }
+
+    .contact-link:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: var(--lilac-300);
+      color: var(--white);
+      transform: translateY(-4px);
+    }
+
+    /* footer */
+    .footer {
+      background: var(--ink);
+      text-align: center;
+      padding: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.3);
+    }
+
+    /* ─── ANIMATIONS ─────────────────────────────────────── */
+    @keyframes fadeSlideLeft {
+      from { opacity: 0; transform: translateX(-40px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fadeSlideRight {
+      from { opacity: 0; transform: translateX(40px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding-top: 6rem;
+        padding-bottom: 4rem;
+        gap: 3rem;
+      }
+      .hero::after { display: none; }
+      .hero-text { order: 2; }
+      .hero-photo { order: 1; }
+      .hero-bio { margin-inline: auto; border-left: none; border-top: 2px solid var(--lilac-300); padding: 1rem 0 0; }
+      .hero-links { justify-content: center; }
+      .hero-eyebrow { justify-content: center; }
+      .skills-grid { grid-template-columns: 1fr; }
+      .photo-frame { width: 240px; height: 290px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ticker -->
+  <div class="ticker-wrap">
+    <div class="ticker-inner" id="ticker">
+      <span>✦ Disponível para Estágio</span>
+      <span>✦ ADS · Uninove 2026–2028</span>
+      <span>✦ Python · HTML/CSS · AWS</span>
+      <span>✦ São Paulo – SP</span>
+      <span>✦ Análise de Dados</span>
+      <span>✦ Em constante evolução</span>
+      <span>✦ Disponível para Estágio</span>
+      <span>✦ ADS · Uninove 2026–2028</span>
+      <span>✦ Python · HTML/CSS · AWS</span>
+      <span>✦ São Paulo – SP</span>
+      <span>✦ Análise de Dados</span>
+      <span>✦ Em constante evolução</span>
+    </div>
+  </div>
+
+  <!-- ══ HERO ══════════════════════════════════════════════ -->
+  <section class="hero" style="padding-top: 5rem;">
+    <div class="hero-photo">
+      <div class="photo-frame" id="photoFrame">
+        <!--
+          ┌─────────────────────────────────────────────────┐
+          │  Para adicionar sua foto, substitua o bloco      │
+          │  .photo-placeholder abaixo por:                 │
+          │  <img src="sua-foto.jpg" alt="Josiane Saldanha">│
+          └─────────────────────────────────────────────────┘
+        -->
+        <img src="img.jpg" alt="Josiane Saldanha">
+          <span class="icon">🌸</span>
+          <p>Insira sua foto aqui<br/><span style="font-size:0.6rem;opacity:0.6">substitua pelo &lt;img&gt; no HTML</span></p>
+        </div>
+      </div>
+      <div class="badge-float"></div>
+    </div>
+
+    <div class="hero-text">
+      <p class="hero-eyebrow">Portfólio Pessoal</p>
+      <h1>Josiane<br/><em>Saldanha</em></h1>
+      <p class="hero-role">// Análise e Desenvolvimento de Sistemas</p>
+      <p class="hero-bio">
+        Profissional com 10 anos de experiência corporativa em transição para Tecnologia.
+        Combino maturidade profissional, pensamento analítico e aprendizado acelerado
+        para entregar resultados práticos desde o primeiro dia.
+      </p>
+      <div class="hero-links">
+        <a href="mailto:josisaldanhaa@gmail.com" class="btn btn-primary">✉ Entrar em contato</a>
+        <a href="https://linkedin.com/in/josiane-saldanha-ads" target="_blank" class="btn btn-outline">↗ LinkedIn</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FLIP CARDS — COMPETÊNCIAS ═══════════════════════ -->
+  <section>
+    <p class="section-label reveal">Passe o mouse para revelar</p>
+    <h2 class="section-title reveal">Minhas <em>Competências</em></h2>
+
+    <div class="cards-grid">
+
+      <div class="flip-card reveal">
+        <div class="flip-card-inner">
+          <div class="flip-front">
+            <div>
+              <div class="card-icon">📊</div>
+              <div class="card-title">Dados & Excel</div>
+            </div>
+            <span class="card-hint">passe o mouse ↻</span>
+          </div>
+          <div class="flip-back">
+            <p class="card-back-text">Python (formação Programaria), Excel Intermediário com fórmulas, formatação condicional e Power Query. Power BI em desenvolvimento.</p>
+            <span class="card-back-tag">Dados</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card reveal" style="animation-delay:0.1s">
+        <div class="flip-card-inner">
+          <div class="flip-front">
+            <div>
+              <div class="card-icon">🌐</div>
+              <div class="card-title">Web & Front-end</div>
+            </div>
+            <span class="card-hint">passe o mouse ↻</span>
+          </div>
+          <div class="flip-back">
+            <p class="card-back-text">HTML5 e CSS3 básico — em crescimento constante. Curiosidade por interfaces funcionais, acessíveis e esteticamente coerentes.</p>
+            <span class="card-back-tag">Web</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card reveal" style="animation-delay:0.2s">
+        <div class="flip-card-inner">
+          <div class="flip-front">
+            <div>
+              <div class="card-icon">☁️</div>
+              <div class="card-title">Cloud AWS</div>
+            </div>
+            <span class="card-hint">passe o mouse ↻</span>
+          </div>
+          <div class="flip-back">
+            <p class="card-back-text">Formação AWS Cloud Practitioner Essentials. Entendimento de conceitos fundamentais de computação em nuvem, serviços e boas práticas.</p>
+            <span class="card-back-tag">Cloud</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card reveal" style="animation-delay:0.3s">
+        <div class="flip-card-inner">
+          <div class="flip-front">
+            <div>
+              <div class="card-icon">💡</div>
+              <div class="card-title">Lógica & Java</div>
+            </div>
+            <span class="card-hint">passe o mouse ↻</span>
+          </div>
+          <div class="flip-back">
+            <p class="card-back-text">Noções de lógica de programação com Java. Base sólida em raciocínio computacional, estruturas de decisão e loops.</p>
+            <span class="card-back-tag">Dev</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card reveal" style="animation-delay:0.4s">
+        <div class="flip-card-inner">
+          <div class="flip-front">
+            <div>
+              <div class="card-icon">🌍</div>
+              <div class="card-title">Idiomas</div>
+            </div>
+            <span class="card-hint">passe o mouse ↻</span>
+          </div>
+          <div class="flip-back">
+            <p class="card-back-text">Inglês Intermediário e Espanhol Intermediário — comunicação em contextos profissionais e leitura de documentação técnica.</p>
+            <span class="card-back-tag">Idiomas</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card reveal" style="animation-delay:0.5s">
+        <div class="flip-card-inner">
+          <div class="flip-front">
+            <div>
+              <div class="card-icon">🧠</div>
+              <div class="card-title">Soft Skills</div>
+            </div>
+            <span class="card-hint">passe o mouse ↻</span>
+          </div>
+          <div class="flip-back">
+            <p class="card-back-text">Pensamento analítico, resolução de problemas, proatividade, aprendizado rápido e adaptabilidade. Maturidade profissional de 10 anos aplicada à tecnologia.</p>
+            <span class="card-back-tag">People</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══ HABILIDADES TÉCNICAS ══════════════════════════════ -->
+  <section class="skills-section">
+    <p class="section-label reveal">Nível de proficiência</p>
+    <h2 class="section-title reveal">Habilidades <em>Técnicas</em></h2>
+
+    <div class="skills-grid" id="skillsGrid">
+      <div class="skill-item reveal">
+        <div class="skill-header">
+          <span class="skill-name">Excel & Power Query</span>
+          <span class="skill-level">Intermediário</span>
+        </div>
+        <div class="skill-bar"><div class="skill-fill" data-width="75%"></div></div>
+      </div>
+
+      <div class="skill-item reveal">
+        <div class="skill-header">
+          <span class="skill-name">Python (dados)</span>
+          <span class="skill-level">Em formação</span>
+        </div>
+        <div class="skill-bar"><div class="skill-fill" data-width="45%"></div></div>
+      </div>
+
+      <div class="skill-item reveal">
+        <div class="skill-header">
+          <span class="skill-name">HTML5 & CSS3</span>
+          <span class="skill-level">Básico</span>
+        </div>
+        <div class="skill-bar"><div class="skill-fill" data-width="40%"></div></div>
+      </div>
+
+      <div class="skill-item reveal">
+        <div class="skill-header">
+          <span class="skill-name">Power BI</span>
+          <span class="skill-level">Em desenvolvimento</span>
+        </div>
+        <div class="skill-bar"><div class="skill-fill" data-width="30%"></div></div>
+      </div>
+
+      <div class="skill-item reveal">
+        <div class="skill-header">
+          <span class="skill-name">AWS Cloud</span>
+          <span class="skill-level">Practitioner</span>
+        </div>
+        <div class="skill-bar"><div class="skill-fill" data-width="50%"></div></div>
+      </div>
+
+      <div class="skill-item reveal">
+        <div class="skill-header">
+          <span class="skill-name">Lógica / Java</span>
+          <span class="skill-level">Noções</span>
+        </div>
+        <div class="skill-bar"><div class="skill-fill" data-width="35%"></div></div>
+      </div>
+
+      <div class="skill-item reveal">
+        <div class="skill-header">
+          <span class="skill-name">Inglês</span>
+          <span class="skill-level">Intermediário</span>
+        </div>
+        <div class="skill-bar"><div class="skill-fill" data-width="60%"></div></div>
+      </div>
+
+      <div class="skill-item reveal">
+        <div class="skill-header">
+          <span class="skill-name">Espanhol</span>
+          <span class="skill-level">Intermediário</span>
+        </div>
+        <div class="skill-bar"><div class="skill-fill" data-width="55%"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ EXPERIÊNCIA ════════════════════════════════════════ -->
+  <section>
+    <p class="section-label reveal">Trajetória</p>
+    <h2 class="section-title reveal">Experiência <em>Profissional</em></h2>
+
+    <div class="timeline">
+      <div class="timeline-item reveal">
+        <div class="timeline-date">FEV 2022 — DEZ 2025</div>
+        <div class="timeline-title">Professora com Apoio Tecnológico</div>
+        <div class="timeline-org">Secretaria da Educação do Estado de São Paulo</div>
+        <ul class="timeline-list">
+          <li>Suporte técnico a docentes e alunos (troubleshooting de hardware/software), garantindo continuidade das atividades digitais.</li>
+          <li>Criou e manteve planilhas Excel para controle de dados pedagógicos e administrativos com fórmulas e formatação condicional.</li>
+          <li>Ministrou conteúdos complexos de forma didática — competência aplicável em suporte a usuários e comunicação em projetos de tecnologia.</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-date">AGO 2012 — FEV 2022</div>
+        <div class="timeline-title">Assistente Administrativo</div>
+        <div class="timeline-org">Assoc. Beneficente Nossa Senhora do Pari</div>
+        <ul class="timeline-list">
+          <li>Gerenciou dados de estoque de insumos cirúrgicos via planilhas, garantindo precisão no monitoramento de compras e inventário.</li>
+          <li>Executou rotinas financeiras (conferência de NFs, contas a pagar/receber) com foco em precisão e organização.</li>
+          <li>Otimizou fluxo de documentos administrativos e atendimento a fornecedores, contribuindo para a eficiência operacional.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FORMAÇÃO ═══════════════════════════════════════════ -->
+  <section style="background: var(--lilac-100);">
+    <p class="section-label reveal">Acadêmico</p>
+    <h2 class="section-title reveal">Formação <em>Acadêmica</em></h2>
+
+    <div class="edu-grid">
+      <div class="edu-card reveal">
+        <div class="edu-year">FEV 2026 — JUL 2028 · EAD</div>
+        <div class="edu-degree">Tecnólogo em ADS</div>
+        <div class="edu-school">Universidade Nove de Julho — Uninove</div>
+      </div>
+      <div class="edu-card reveal">
+        <div class="edu-year">2018</div>
+        <div class="edu-degree">Licenciatura em Pedagogia</div>
+        <div class="edu-school">Universidade Nove de Julho</div>
+      </div>
+      <div class="edu-card reveal">
+        <div class="edu-year">2013 — 2016</div>
+        <div class="edu-degree">Licenciatura em Educação Física</div>
+        <div class="edu-school">Universidade Nove de Julho</div>
+      </div>
+      <div class="edu-card reveal">
+        <div class="edu-year">2010</div>
+        <div class="edu-degree">Técnico em Administração</div>
+        <div class="edu-school">Instituto Dom Bosco Salesianos</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ CONTACT ════════════════════════════════════════════ -->
+  <section class="contact-section">
+    <p class="section-label reveal" style="color:var(--lilac-300); justify-content:center;">
+      Vamos conversar?
+    </p>
+    <h2 class="section-title reveal">Entre em <em>Contato</em></h2>
+    <p class="reveal" style="font-size:0.85rem; color:rgba(255,255,255,0.6); max-width:480px; margin:0 auto; line-height:1.8;">
+      Aberta a oportunidades de estágio em Tecnologia, Dados e Desenvolvimento.<br/>
+      São Paulo — SP.
+    </p>
+    <div class="contact-links">
+      <a href="mailto:josisaldanhaa@gmail.com" class="contact-link reveal">
+        ✉ josisaldanhaa@gmail.com
+      </a>
+      <a href="tel:+5511965299435" class="contact-link reveal">
+        ☎ (11) 96529-9435
+      </a>
+      <a href="https://linkedin.com/in/josiane-saldanha-ads" target="_blank" class="contact-link reveal">
+        ↗ LinkedIn
+      </a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    Josiane Saldanha · 2025 · Feito com HTML & CSS · São Paulo, SP
+  </footer>
+
+  <script>
+    /* ── Intersection Observer — reveal ── */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.classList.add('visible');
+            // Trigger skill bars when visible
+            const fills = entry.target.querySelectorAll('.skill-fill');
+            fills.forEach(f => { f.style.width = f.dataset.width; });
+          }, i * 80);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Also observe skill fills directly
+    const skillObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.querySelectorAll('.skill-fill').forEach(f => {
+            f.style.width = f.dataset.width;
+          });
+          skillObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    document.querySelectorAll('.skill-item').forEach(el => skillObserver.observe(el));
+
+    /* ── Parallax subtle on hero blob ── */
+    document.addEventListener('mousemove', e => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 20;
+      const y = (e.clientY / window.innerHeight - 0.5) * 20;
+      document.querySelector('.hero-photo')?.style.setProperty('--px', x + 'px');
+      document.querySelector('.hero-photo')?.style.setProperty('--py', y + 'px');
+    });
+  </script>
+</body>
+</html>
