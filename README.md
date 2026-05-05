@@ -39,4 +39,4 @@ Portfólio pessoal desenvolvido do zero durante minha transição de carreira pa
 
 ## 🔗 Como visualizar
 
-Acesse diretamente pelo link publicado: file:///C:/Users/User/Documents/ESTUDOS/HTML-CSS/MY%20SITE/JosianeSaldanha.html
+Acesse diretamente pelo link publicado: josisaldanha.github.io/
